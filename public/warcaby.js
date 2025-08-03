@@ -1,5 +1,5 @@
 // Connect to the /warcaby namespace
-const socket = io.connect('http://localhost:3000/warcaby');
+const socket = io.connect('https://games-online.onrender.com/warcaby');
 ////////////////////////////////////////////////console.log("warcaby");
 let Player;
 let room = "";
