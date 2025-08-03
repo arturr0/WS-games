@@ -2,7 +2,7 @@
 // Global Variables
 // Global Variables
 // Global Variables
-const socket = io.connect('https://spiral-alder-orca.glitch.me/poker');
+const socket = io.connect('https://games-online.onrender.com/poker');
 let room;
 
 let cardImagesClient = {};
@@ -40,7 +40,7 @@ let showMyCards = false;
 let showOppoCards = false;
 socket.on('connect', () => {
     console.log('Connected to /warcaby namespace');
-  
+
     // Retrieve the stored server data from local storage
     const serverData = JSON.parse(localStorage.getItem('serverData'));
     console.log(serverData);
@@ -50,7 +50,7 @@ socket.on('connect', () => {
         playerName = serverData.inputText;
         console.log(Player);
         console.log(playerName);
-  
+
         // Emit the joinServer event with the retrieved data
         socket.emit('joinServer', {
             inputText: serverData.inputText,
@@ -58,16 +58,16 @@ socket.on('connect', () => {
             players: serverData.players,
             player: serverData.player // Send player information
         });
-  
+
         // Optionally, clear the data from local storage if it is no longer needed
         localStorage.removeItem('serverData');
     }
-  });
+});
 
 socket.on('joinedRoom', (POKER_ROOM, USER_NAME, USER_NO) => {
     room = POKER_ROOM;
     users_no = USER_NO
-    if(users_no > 1) document.getElementById('chip').textContent = 'CLICK TO START THE GAME'
+    if (users_no > 1) document.getElementById('chip').textContent = 'CLICK TO START THE GAME'
     console.log(`Joined room: ${POKER_ROOM}`);
     socket.emit('im in', room, myName);
 });
@@ -77,14 +77,14 @@ socket.on('user left', (name_left) => {
     const divs = document.querySelectorAll('.users');
     divs.forEach((div) => {
         if (div.textContent === name_left) {
-                div.remove(); // Removes the div
+            div.remove(); // Removes the div
         }
     });
-    for(let i = 0; i < users_names.length; i++)
-        if(name_left == users_names[i])
+    for (let i = 0; i < users_names.length; i++)
+        if (name_left == users_names[i])
             users_names.splice(i, 1);
     users_no--;
-    if(users_no == 1) document.getElementById('chip').textContent = 'WAIT FOR PLAYERS'    
+    if (users_no == 1) document.getElementById('chip').textContent = 'WAIT FOR PLAYERS'
 });
 
 // socket.on('update poker players no', (update_room) => {
@@ -113,39 +113,39 @@ socket.on('poker room', (newRoom) => {
         if (newRoom.users[i].user === myName) {
             myIndex = i;
             bank = newRoom.users[i].bank;
-    
+
             // Clear any existing content inside '#myBank'
             $('#myBank').empty();
-    
+
             // Append name and bank value to '#myBank'
             $('#myBank').append(`<div class="name">${newRoom.users[i].user}</div><div class="bank" value=${i} style="margin-left: 10px;">$${newRoom.users[i].bank}</div>`);
-        } 
+        }
         else {
             pokerPlayers.push({ player: newRoom.users[i].user, index: i });
-    
+
             // Create a new container div for each player
             const containerDiv = document.createElement('div');
             containerDiv.className = 'playersBank';
             containerDiv.style.display = 'flex';
-    
+
             // Add the player's name and bank value to the new container
             containerDiv.innerHTML = `<div class="name">${newRoom.users[i].user}</div><div class="bank" value=${i} style="margin-left: 10px;">$${newRoom.users[i].bank}</div>`;
-    
+
             // Append the new container to '#playersBank'
             $('#playersBank').append(containerDiv);
-    
+
             // Optionally, append the player's name to '#players' if needed
             $('#players').append(`<div class="message" style="display: flex;"><div class="users" value=${i}>${newRoom.users[i].user}</div><div class="action" value=${i}> </div></div>`);
         }
     }
-    
+
     console.log(myIndex, players_no, pokerPlayers);
     //setBankWidth();
     updateUI();
-    
-    
-    
-        
+
+
+
+
 });
 socket.on('start round', (state) => {
     //console.log(state);
@@ -163,7 +163,7 @@ socket.on('start round', (state) => {
     handsClient = state.hands;
     players_no = state.users.length;
     preload();
-    renderCards(); 
+    renderCards();
 });
 socket.on('changed cards', (newCards) => {
     turn = newCards.turn;
@@ -178,7 +178,7 @@ socket.on('changed cards', (newCards) => {
     //players_no = numPlayers;
     //preload();
     renderCards();
- 
+
 });
 // socket.on('betUpdate', (pokerRoom, raise, raised, pass) => {
 //     console.log(pokerRoom);
@@ -203,17 +203,17 @@ socket.on('changed cards', (newCards) => {
 //     for (let i = OppoRaise.length - 1; i >= 0; i--) {
 //         if (OppoRaise[i].turn != myIndex) {
 //             lastRaise += OppoRaise[i].value;
-            
+
 //         }
 //         else break;
 //     }
 
 //     // if (pokerRoom.turn == myIndex && Myraise > 0 && pass != "pass") {
 //     //         console.log(lastValidValue)
-            
+
 //     //         //console.log(OppoRaise, Myraise)
-        
-       
+
+
 //     //     //Myraise = lastValidValue - OppoRaise;
 //     //     console.log(OppoRaise, Myraise);
 //     //     document.getElementById("inputValue").value = pokerRoom.bet - Myraise; 
@@ -228,14 +228,14 @@ socket.on('changed cards', (newCards) => {
 //     // }
 //     if (!Ibet && myIndex == pokerRoom.turn) document.getElementById("inputValue").value = pokerRoom.bet;
 //     else if (Ibet && myIndex == pokerRoom.turn) document.getElementById("inputValue").value = lastRaise;
-      
+
 //     passed = [];
 //     for (let i = 0; i < pokerRoom.users.length; i++)
 //         if (pokerRoom.users[i].pass)
 //             passed.push(i);
 //     renderCards();
 //     // Update the game state and UI based on the bet update
-    
+
 // });
 socket.on('betUpdate', (pokerRoom, raise, raised, pass) => {
     try {
@@ -305,12 +305,12 @@ socket.on('start changing cards', (cards, cardChangeStartIndex) => {
 socket.on('my changed cards', () => {
     //console.log(private);
     renderCards();
-    
-});  
+
+});
 socket.on('update poker players no', (update_room) => {
     //poker_no = update_room.users.length
     console.log(update_room);
-    if(update_room == 0) {
+    if (update_room == 0) {
         players_no = update_room;
         handsClient = [];
     }
@@ -318,49 +318,49 @@ socket.on('update poker players no', (update_room) => {
     $('#players').empty();
     $('#playersBank').empty();
     pokerPlayers = [];
-    if(update_room != 0) {
+    if (update_room != 0) {
         handsClient = update_room.hands;
-        for(let i = 0; i < update_room.users.length; i++)
-            if(update_room.users[i].user == myName) {
+        for (let i = 0; i < update_room.users.length; i++)
+            if (update_room.users[i].user == myName) {
                 myIndex = i;
                 bank = update_room.users[i].bank
             }
             else {
-                pokerPlayers.push({player: update_room.users[i].user, index: i});
+                pokerPlayers.push({ player: update_room.users[i].user, index: i });
                 //$('#players').append(`<div class="users" value=${i}>${update_room.users[i].user}</div>`);
                 // $('#playersBank').append(`<div class="usersBank" value=${i}>${update_room.users[i].user}'s bank: ${update_room.users[i].bank}</div>`);
                 const containerDiv = document.createElement('div');
                 containerDiv.className = 'playersBank';
                 containerDiv.style.display = 'flex';
-    
-            // Add the player's name and bank value to the new container
+
+                // Add the player's name and bank value to the new container
                 containerDiv.innerHTML = `<div class="name">${update_room.users[i].user}</div><div class="bank" value=${i} style="margin-left: 10px;">$${update_room.users[i].bank}</div>`;
-    
-            // Append the new container to '#playersBank'
+
+                // Append the new container to '#playersBank'
                 $('#playersBank').append(containerDiv);
-    
-            // Optionally, append the player's name to '#players' if needed
+
+                // Optionally, append the player's name to '#players' if needed
                 $('#players').append(`<div class="message" style="display: flex;"><div class="users" value=${i}>${update_room.users[i].user}</div><div class="action" value=${i}> </div></div>`);
-            
+
             }
     }
     console.log(myIndex, players_no, pokerPlayers);
     //setBankWidth();
     updateUI();
-    renderCards();     
+    renderCards();
 });
 
 socket.on('restart', () => {
     document.getElementById('buttonContainer').style.display = "flex";
     startReq = false;
-      
+
 });
 let mess = 'message from client';
 console.log(room);
 
 // socket.on('start round', (hands) => {
 //     console.log(hands);
-    
+
 //     handsClient = hands;
 //     players_no = numPlayers;
 //     preload();
@@ -413,24 +413,24 @@ function renderCards() {
     // Create containers for positioning
     const containerDiv = document.createElement('div');
     containerDiv.className = 'players-container';
-    
+
     const top = document.createElement('div');
     top.id = 'top';
-    
+
     const middleDiv = document.createElement('div');
     middleDiv.id = 'middle';
-    
+
     const left = document.createElement('div');
     left.id = 'left';
-    
+
     const right = document.createElement('div');
     right.id = 'right';
-    
+
     if (numPlayers === 3 || numPlayers === 4) {
         fragment.appendChild(top);
         fragment.appendChild(middleDiv);
         middleDiv.appendChild(left);
-        middleDiv.appendChild(right);    
+        middleDiv.appendChild(right);
     }
 
     // Render opponents
@@ -743,7 +743,7 @@ function renderCards() {
 //         const cardIndex = cardContainer.dataset.cardIndex;
 //         const playerRow = cardContainer.closest('.player-row');
 //         const playerIndexClient = playerRow.dataset.playerIndexClient;
-    
+
 //         if (playerIndexClient - 1 == turn) {
 //             cardContainer.classList.add('special-effect');
 //             playerRow.classList.add('special-effect');
@@ -871,10 +871,10 @@ function adjustCardContainers() {
         const cardIndex = cardContainer.dataset.cardIndex;
         const playerRow = cardContainer.closest('.player-row');
         const playerIndexClient = playerRow.dataset.playerIndexClient;
-    
+
         // Convert playerIndexClient to a number
         const playerIndex = parseInt(playerIndexClient, 10);
-    
+
         if (playerIndexClient - 1 === turn) {
             // Apply special effect if playerIndexClient - 1 matches 'turn'
             cardContainer.classList.add('special-effect');
@@ -927,7 +927,7 @@ function adjustSize(callback) {
             const player = document.getElementById(`player-${myIndex + 1}`);
             player.style.marginBottom = `22px`;
             player.style.marginTop = `auto`;
-            
+
         }
         if (numPlayers === 2) {
             // const player2 = document.getElementById(`player-${myIndex === 0 ? 2 : 1}`);
@@ -936,7 +936,7 @@ function adjustSize(callback) {
             // }
             const player = document.getElementById(`player-${myIndex + 1}`);
             player.style.marginBottom = `22px`;
-            
+
         }
 
         // Adjust the size of player rows based on the image dimensions
@@ -967,7 +967,7 @@ function adjustSize(callback) {
 // Debounce function to limit the rate at which adjustSize is called
 function debounce(func, wait) {
     let timeout;
-    return function(...args) {
+    return function (...args) {
         clearTimeout(timeout);
         timeout = setTimeout(() => func.apply(this, args), wait);
     };
@@ -984,8 +984,8 @@ window.addEventListener('resize', debounce(() => {
 function startGame() {
     socket.emit('start', room);
 }
-document.getElementById('chip').addEventListener('click', function() {
-    if(users_no > 1 && !startReq) {
+document.getElementById('chip').addEventListener('click', function () {
+    if (users_no > 1 && !startReq) {
         socket.emit('start game', room, myName);
         startReq = true;
         document.getElementById('chip').textContent = "WAIT FOR ANOTHER PLAYER'S DECISION"
@@ -1024,17 +1024,17 @@ document.getElementById('chip').addEventListener('click', function() {
 //         } else {
 //             // For other rows: flip all cards in the row
 //             playerRow.classList.toggle('flipped');
-            
+
 //             // Get the current state of the row
 //             const isRowFlipped = playerRow.classList.contains('flipped');
-            
+
 //             // Toggle the 'flipped' class on all card containers in the row
 //             playerRow.querySelectorAll('.card-container').forEach(card => {
 //                 card.classList.toggle('flipped', isRowFlipped);
 //             });
 //         }
 //     });
-    
+
 // });
 function changeCards() {
     console.log(cardsToChange);
@@ -1102,84 +1102,84 @@ function onCardVisibilityUpdateComplete() {
 
 // Set the value and min/max attribute of input to initialValue when the page loads
 let initialValue = 2;
-        let myBank = 10; // example value
+let myBank = 10; // example value
 
-        // Set the value and min/max attribute of input to initialValue when the page loads
-        window.onload = function() {
-            const inputElement = document.getElementById("inputValue");
-            inputElement.value = 30;
-            //updateMinMax(30, 40);
-        }
+// Set the value and min/max attribute of input to initialValue when the page loads
+window.onload = function () {
+    const inputElement = document.getElementById("inputValue");
+    inputElement.value = 30;
+    //updateMinMax(30, 40);
+}
 
-        function updateMinMax(newMin, newMax) {
-            const inputElement = document.getElementById("inputValue");
+function updateMinMax(newMin, newMax) {
+    const inputElement = document.getElementById("inputValue");
 
-            // Update the min and max attributes
-            inputElement.setAttribute("min", newMin);
-            inputElement.setAttribute("max", newMax);
+    // Update the min and max attributes
+    inputElement.setAttribute("min", newMin);
+    inputElement.setAttribute("max", newMax);
 
-            // Validate and enforce the current value within the new bounds
-            validateInputWithinBounds(inputElement);
-        }
+    // Validate and enforce the current value within the new bounds
+    validateInputWithinBounds(inputElement);
+}
 
-        function validateInputWithinBounds(inputElement) {
-            let inputValue = parseInt(inputElement.value, 10);
-            const minValue = parseInt(inputElement.getAttribute("min"), 10);
-            const maxValue = parseInt(inputElement.getAttribute("max"), 10);
+function validateInputWithinBounds(inputElement) {
+    let inputValue = parseInt(inputElement.value, 10);
+    const minValue = parseInt(inputElement.getAttribute("min"), 10);
+    const maxValue = parseInt(inputElement.getAttribute("max"), 10);
 
-            // Ensure the value is within bounds
-            if (inputValue < minValue) {
-                inputElement.value = minValue;
-            } else if (inputValue > maxValue) {
-                inputElement.value = maxValue;
-            }
-        }
-
-        // Add event listener for manual input
-        document.getElementById("inputValue").addEventListener('input', function() {
-            validateInputWithinBounds(this);
-        });
-    function submitValue() {
-        //validateInput();
-        const inputElement = document.getElementById("inputValue");
-        const inputValue = parseInt(inputElement.value) || 0;
-        result = inputValue;
-        lastValidValue = result;
-        //updateResult();
-        console.log(lastValidValue);
-        let betMessage = '';
-        // if (!call && !raise) {
-        //     betMessage = 'bet';    
-        // }
-        // else if (call && !raise) {
-        //     betMessage = 'call';
-        // }
-        // else if (!call && raise) {
-        //     betMessage = 'raise';
-        // }
-        Ibet = true;
-        if (currentBet < lastValidValue) {
-            Myraise = lastValidValue - currentBet;
-            console.log("check2", Myraise ,lastValidValue, currentBet);
-        }
-        // else if (OppoRaise > 0) {
-        //     Myraise = lastValidValue - OppoRaise;
-        //     console.log("check2", Myraise ,lastValidValue, OppoRaise)
-        // }
-        socket.emit('bet', room, myIndex, betMessage, lastValidValue)
+    // Ensure the value is within bounds
+    if (inputValue < minValue) {
+        inputElement.value = minValue;
+    } else if (inputValue > maxValue) {
+        inputElement.value = maxValue;
     }
+}
+
+// Add event listener for manual input
+document.getElementById("inputValue").addEventListener('input', function () {
+    validateInputWithinBounds(this);
+});
+function submitValue() {
+    //validateInput();
+    const inputElement = document.getElementById("inputValue");
+    const inputValue = parseInt(inputElement.value) || 0;
+    result = inputValue;
+    lastValidValue = result;
+    //updateResult();
+    console.log(lastValidValue);
+    let betMessage = '';
+    // if (!call && !raise) {
+    //     betMessage = 'bet';    
+    // }
+    // else if (call && !raise) {
+    //     betMessage = 'call';
+    // }
+    // else if (!call && raise) {
+    //     betMessage = 'raise';
+    // }
+    Ibet = true;
+    if (currentBet < lastValidValue) {
+        Myraise = lastValidValue - currentBet;
+        console.log("check2", Myraise, lastValidValue, currentBet);
+    }
+    // else if (OppoRaise > 0) {
+    //     Myraise = lastValidValue - OppoRaise;
+    //     console.log("check2", Myraise ,lastValidValue, OppoRaise)
+    // }
+    socket.emit('bet', room, myIndex, betMessage, lastValidValue)
+}
 
 //  function updateResult() {
 //      document.getElementById("result").textContent = "Result: " + result;
 //  }
 
-    // Attach input event listener to validate input on change
-    // document.getElementById("inputValue").addEventListener("input", function() {
-    //     //validateInput();
-    //     logValueChange();
-    // });
+// Attach input event listener to validate input on change
+// document.getElementById("inputValue").addEventListener("input", function() {
+//     //validateInput();
+//     logValueChange();
+// });
 
-    function logValueChange() {
+function logValueChange() {
     const inputElement = document.getElementById("inputValue");
     const currentValue = parseInt(inputElement.value) || 0;
     if (currentValue > initialValue) {
@@ -1187,7 +1187,7 @@ let initialValue = 2;
         lastValidValue = currentValue; // Update the last valid value after logging
         call = false;
         raise = true;
-        
+
         document.getElementById('submitBet').textContent = 'RAISE';
     }
     if (currentValue == initialValue) {
@@ -1199,8 +1199,8 @@ let initialValue = 2;
     }
     console.log(myBank - currentValue);
 }
- 
-         // Function to log changes in value if the new value is higher
+
+// Function to log changes in value if the new value is higher
 //     // Define a function that will be executed for each value in the array
 // function centerIconForValues(cardContainers, values) {
 //     cardContainers.forEach(cardContainer => {
@@ -1230,7 +1230,7 @@ let initialValue = 2;
 function centerIconInPlayerRow(element) {
     // Create the <i> element
     const iconElement = document.createElement('i');
-    
+
     // Add the desired class to the <i> element
     iconElement.classList.add('icon-cancel-circled2'); // Example: FontAwesome arrow-down icon
 
@@ -1274,7 +1274,7 @@ function setBankWidth() {
 
     // Calculate the maximum width across both #playersBank and #myBank
     let maxWidth = 0;
-    
+
     // Check widths in #playersBank
     playersBankNames.forEach(element => {
         const width = element.offsetWidth;
@@ -1331,7 +1331,7 @@ function updateUI() {
 }
 
 
-document.getElementById('submitBet').addEventListener('click', function() {
+document.getElementById('submitBet').addEventListener('click', function () {
     let inputValue = document.getElementById('inputValue').value;
 
     // Convert to a number
