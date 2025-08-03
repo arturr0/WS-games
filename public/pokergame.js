@@ -1,8 +1,5 @@
 // Global Variables
-// Global Variables
-// Global Variables
-// Global Variables
-const socket = io.connect('http://localhost:3000/poker');
+const socket = io.connect('https://games-online.onrender.com/poker');
 let room;
 
 let cardImagesClient = {};
