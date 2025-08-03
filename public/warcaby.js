@@ -38,7 +38,7 @@ socket.on('joinedRoom', (ROOM) => {
   console.log(room);
   let roomInfo = document.querySelector('#room');
   console.log(room);
-  roomInfo.value = room;
+  //roomInfo.value = room;
   document.dispatchEvent(new Event('socketConnected'));
 });
 
